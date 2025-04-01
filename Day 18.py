@@ -6,7 +6,7 @@ data = []
 for lines in f:
     data.append(lines.rstrip())
 
-s = 6
+s = 70
 grid = [[0]*(s+1) for  i in range(s+1)]
 
 def part_one(n):
@@ -27,26 +27,24 @@ def part_one(n):
             if grid[nr][nc] == 1:
                 continue
             if nr == nc == s:
-                return d + 1
+                return True, d + 1
             if (nr,nc) in seen:
                 continue
             seen.add((nr,nc))
             q.append((nr,nc,d+1))
-    return 0
+
+    return False, -1
 
 def part_two_whole_corrupted():
     global data
-    low = 0
-    high = len(data)
-    while low < high:
-        middle = (low + high)//2
-        if part_one(middle) == 0:
-            high = middle
-        else:
-            low = middle + 1
-
-    return high
+    go = part_one(0)[0]
+    position = 2589
+    while go is True:
+        position += 1
+        go = part_one(position)[0]
+    return position;
 
 
-# print(part_one(n))
-print(data[part_two_whole_corrupted()])
+# print(part_one(2994))
+print(part_two_whole_corrupted())
+print(data[2994])
