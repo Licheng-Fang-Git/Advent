@@ -64,7 +64,6 @@ def part_one(part_one_grid):
         dot = False
         cr, cc = r,c
         dr, dc = get_next_move(move)
-
         while go is True and dot is False:
             cr += dr
             cc += dc

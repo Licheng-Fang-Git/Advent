@@ -11,16 +11,13 @@ for line in file:
         one_row.append(value)
     grid.append(one_row)
 
-for row in grid:
-    print(row)
 
-def part_one(grid):
-    q = deque([(0, -1, 0, 1)])
+def part_one(grid, sr, sc, sdr, sdc):
+    q = deque([(sr, sc, sdr, sdc)])
     seen = set()
 
     while q:
         r, c, dr, dc = q.popleft()
-        print(r,c,dr,dc)
         for nr, nc in [(r + dr, c + dc)]:
             if nr < 0 or nc < 0 or nr >= len(grid) or nc >= len(grid[0]):
                 continue
@@ -53,15 +50,22 @@ def part_one(grid):
                         if (nr, nc, dr, dc) not in seen:
                             q.append((nr, nc, dr, dc))
                             seen.add((nr, nc, dr, dc))
+    electric = set()
+    for r, c, _, _ in seen:
+        electric.add((r, c))
+    return electric
 
-    return seen
 
+def part_two():
+    max_len = 0
+    for column in range(len(grid[0])):
+        max_len = max(max_len, len(part_one(grid, -1, column, 1, 0)))
+        max_len = max(max_len, len(part_one(grid, len(grid), column, -1, 0)))
 
-print(len(part_one(grid)))
+    for row in range(len(grid)):
+        max_len = max(max_len, len(part_one(grid, row, -1, 0, 1)))
+        max_len = max(max_len, len(part_one(grid, row, len(grid[0]), 0, -1)))
 
-electric = set()
+    return max_len
 
-for r, c, _, _ in part_one(grid):
-    electric.add((r,c))
-
-print(len(electric))
+print(part_two())
