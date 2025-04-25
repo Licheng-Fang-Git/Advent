@@ -2,19 +2,25 @@ file = open("input").read().split("\n\n")
 
 grid = []
 
+
 def mirror(grid):
-    for r in range(1,len(grid)):
+    for r in range(1, len(grid)):
         above = grid[:r][::-1]
         below = grid[r:]
-        for x,y in zip(above, below):
-            print((x,y))
-        if above == below:
+        total_changes = 0
+        for x, y in zip(above, below):
+            for a, b in zip(x, y):
+                if a != b:
+                    total_changes += 1
+
+        if total_changes == 1:
             return r
     return 0
 
+
 total = 0
 for line in file:
-    grid =  line.split()
+    grid = line.split()
     total += mirror(grid) * 100
     vertical_grid = list(zip(*grid))
     # for row in grid:
