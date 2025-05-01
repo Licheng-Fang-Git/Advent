@@ -19,10 +19,10 @@ for r in range(len(grid)):
         if grid[r][c] not in antennas: antennas[grid[r][c]] = []
         antennas[grid[r][c]].append((r,c))
 
-antin = []
+antinode = []
 
 for array in antennas.values():
     for i in range(len(array)):
         for j in range(i, len(array)):
-
+            antinode.append()
 
