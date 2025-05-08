@@ -1,3 +1,4 @@
+import heapq
 from collections import deque
 
 file = open("input").readlines()
@@ -6,33 +7,42 @@ for line in file:
     line = line.strip()
     one_row = []
     for num in line:
-        one_row.append(num)
+        one_row.append(int(num))
     grid.append(one_row)
 
 for row in grid:
     print(row)
 
 
+
 def part_one(grid):
-    q = deque([(0, 1, grid[0][0])])
-    seen = set()
+    pq = ([(0,0,0,0,1,0)])
+    seen =  set()
+    while pq:
+        hl, r, c, dr, dc, n = heapq.heappop(pq)
 
-    while q:
-        r, c, h = q.popleft()
-        seen.add((r, c))
-        for nr, nc in [(r + 1, c + 0), (r, c + 1), (r, c - 1)]:
-            if nr < 0 or nc < 0 or nr >= len(grid) or nc >= len(grid):
-                continue
-            if (nr, nc) in seen:
-                continue
-            heat_loss = grid[nr][nc]
-            optimal = float("inf")
-            if heat_loss < optimal:
-                optimal = heat_loss
-                r = nr
-                c = nc
-                h += optimal
-        q.append((r, c, h))
+        if (r,c,dr,dc,n) in seen:
+            continue
+        seen.add((r,c,dr,dc,n))
+
+        if (r,c) == (len(grid)-1, len(grid[0])-1) and n >= 4:
+            return hl
+
+        if n < 10 and (dr,dc) != (0,0):
+            nr = r + dr
+            nc = c + dc
+            if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]):
+                heapq.heappush(pq, (hl + grid[nr][nc], nr, nc, dr, dc, n + 1))
+
+        if n >= 4 and (dr,dc) != (0,0):
+            for ndr, ndc in [(-1,0), (1,0), (0,1), (0,-1)]:
+                if (ndr,ndc) != (-dr, -dc) and (dr, dc) != (ndr, ndc):
+                    nr = r + ndr
+                    nc = c + ndc
+                    if  0 <= nr < len(grid) and 0 <= nc < len(grid[0]) :
+                        heapq.heappush(pq, (hl + grid[nr][nc], nr, nc, ndr, ndc, 1))
 
 
-part_one(grid)
+
+
+print(part_one(grid))
