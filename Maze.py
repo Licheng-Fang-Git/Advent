@@ -31,7 +31,7 @@ def solve_one(r, c):
 def solve_two(r, c, direct_path):
     if (r, c) == (er, ec):
         return direct_path
-    correct_path = []
+
     points.append((r, c))
     for nr, nc in [(r , c+1), (r +1 , c), (r-1, c), (r, c - 1)]:
         if nr < 0 or nc < 0 or nr >= len(grid) or nc >= len(grid[0]):

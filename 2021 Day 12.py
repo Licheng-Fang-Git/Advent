@@ -1,7 +1,6 @@
-import sys
+
 file = open("input").readlines()
 
-sys.setrecursionlimit(3000)
 
 edges = [line.strip().split("-") for line in file]
 conn = {}
@@ -24,24 +23,22 @@ print(conn)
 
 def search(node, req, no_more):
     if node == "End":
-        print(req)
-        sets.add(tuple(req))
-        return
-
-    if node.islower():
-        if node in req:
-            if no_more is True:
-                return
-            no_more = True
-
+        return 1
+    total = 0
     for neighbor in conn[node]:
         if neighbor == "Start":
             continue
-        new_req = req[:]
-        new_req.append(neighbor)
-        search(neighbor, new_req, no_more)
+        if neighbor.islower() and neighbor in req:
+            if no_more is True:
+                continue
+            total += search(neighbor, [*req, neighbor], True)
+        else:
+            total += search(neighbor, [*req, neighbor], no_more)
 
-search("Start", ["Start"], False)
+
+    return total
+
+print(search("Start", ["Start"], False))
 
 # nums = {1, 2, 3, 4, 1}
 #
@@ -54,5 +51,4 @@ new_nums = nums[:]
 new_nums.append(5)
 print(new_nums)
 
-print(len(sets))
 

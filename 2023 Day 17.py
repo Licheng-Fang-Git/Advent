@@ -20,7 +20,7 @@ def part_one(grid):
     seen =  set()
     while pq:
         hl, r, c, dr, dc, n = heapq.heappop(pq)
-
+        
         if (r,c,dr,dc,n) in seen:
             continue
         seen.add((r,c,dr,dc,n))
