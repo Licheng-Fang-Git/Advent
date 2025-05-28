@@ -1,43 +1,41 @@
 file = open("input").readlines()
 
-
+def sign(x):
+    if x > 0:
+        return 1
+    if x < 0:
+        return -1
+    return 0
 
 rules = {
-    "R" : 1,
-    "U" : -1j,
-    "L" : -1,
-    "D" : 1j
+    "R" : 1 + 0j,
+    "U" : 0 + -1j,
+    "L" : -1 + 0j,
+    "D" : 0 + 1j
 }
 visited = set()
-head = 2 - 1j
-tail = 1 - 2j
+head = 0 + 0j
+tail = 0 + 0j
 
-def dig_adjacent(tail_check):
-    for next in [1, -1, 1j, -1j]:
-        if next + tail_check == head:
-            return False
-    return True
-
-def not_adjacent(tail_check):
-    for next_spot in [1, -1, 1j, -1j, -1 + 1j, -1-1j, 1+1j, 1-1j]:
-        if next_spot + tail_check == head:
-            return False
-    return True
+def not_adjacent(tail_check, head_check):
+    print("Check: ", head_check, tail_check)
+    if abs(head_check - tail_check) > 1 :
+        print("distance:", abs(tail_check + head_check))
+        return True
+    return False
 
 def solve_one(direct, move_unit):
     global head, tail
     for _ in range(move_unit):
-        print(head, tail)
         visited.add(tail)
-        prev_head = head
         head += rules[direct]
-        if not_adjacent(tail):
-            if tail.real != head.real and tail.imag != head.imag:
-                tail = prev_head
-            else:
-                tail += rules[direct]
-        else:
-            continue
+        print(head, tail)
+        offset = head - tail
+        print("offset", offset, offset.real**2 + offset.imag**2 )
+        if offset.real**2 + offset.imag**2 > 2:
+            print(complex(sign(offset.real), sign(offset.imag)))
+            tail = tail + complex(sign(offset.real), sign(offset.imag))
+            visited.add(tail)
 
 for line in file:
     direction, units = line.split(" ")

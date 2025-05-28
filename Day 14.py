@@ -10,8 +10,8 @@ with open("input") as file:
 
 finish = []
 for px, py, vx, vy in robots:
-    fy = (px + vx * 100) % WIDTH;
-    fx = (py + vy * 100) % HEIGHT;
+    fy = (px + vx * 100) % WIDTH
+    fx = (py + vy * 100) % HEIGHT
     finish.append((fx,fy))
 
 grid =[[0]*WIDTH for _ in range(HEIGHT)]
