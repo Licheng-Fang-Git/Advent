@@ -1,7 +1,8 @@
 class TreeNode:
-    def __init__(self, symbol, rank):
+    def __init__(self, id, symbol, rank):
+        self.id = id
         self.symbol = symbol
-        self.rank = rank
+        self.rank = int(rank)
         self.left = None
         self.right = None
 
@@ -13,6 +14,6 @@ class TreeNode:
 
     def inorder_traversal(self, node, direction):
         if node:
-            print(node.symbol, node.rank, direction)
+            print(node.id, node.symbol, node.rank, direction)
             self.inorder_traversal(node.left, "left")
             self.inorder_traversal(node.right, "right")
