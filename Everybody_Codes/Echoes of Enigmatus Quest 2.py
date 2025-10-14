@@ -80,16 +80,37 @@ def delete_branch(node, swap_node_id, tree_place, found):
     delete_branch(node.left, swap_node_id, tree_place, found)
     delete_branch(node.right, swap_node_id, tree_place, found)
 
-def get_branch(node, swap_id, rank):
+def get_branch(node, swap_id):
+    if node is None:
+        return
+    if node.id == swap_id:
+        return tuple((node, node))
+    if node.left and node.left.id == swap_id:
+        return tuple((node, node.left))
+    if node.right and node.right.id == swap_id:
+        return tuple((node, node.right))
+
+    return get_branch(node.left, swap_id) or get_branch(node.right, swap_id)
+
+def dfs_swap_branch(node, swap_id, parent, branch):
     if node is None:
         return
 
-    if node.left and node.left.id == swap_id and node.left.rank == rank:
-        return tuple((node, node.left))
-    if node.right and node.right.id == swap_id and node.right.rank == rank:
-        return tuple((node, node.right))
+    if node.id == parent.id and node.rank == parent.rank:
+        if node.left and node.left.id == branch.id:
+            node.left = None
+            node.left = copy.deepcopy(branch)
+            return
 
-    return get_same_branch(node.left, swap_id, rank, ) or get_same_branch(node.right, swap_id, rank)
+    if node.id == parent.id and node.rank == parent.rank:
+        if node.right and node.right.id == branch.id:
+            node.right = None
+            node.right = copy.deepcopy(branch)
+            print("Here", node.right.rank)
+            return
+
+    dfs_swap_branch(node.left, swap_id, parent, branch)
+    dfs_swap_branch(node.right, swap_id, parent, branch)
 
 
 # swap different tree nodes and sets the swap_node as the root
@@ -98,7 +119,6 @@ def dfs_swap(node, swap_node_id, tree_place):
     global root_left_swap_node, root_right_swap_node
     if node is None:
         return
-
     if node.id == swap_node_id:
         left_val = tree_dictionary[swap_node_id][0]
         right_val = tree_dictionary[swap_node_id][1]
@@ -151,19 +171,7 @@ for line in file.split('\n'):
         print(swap_id)
         left_tree_children = []
         right_tree_children = []
-        swap_branch_left = ""
-        swap_branch_right = ""
-        delete_branch(root_left_tree, swap_id, "left", False)
-        delete_branch(root_right_tree, swap_id, "right", False)
-        print(left_tree_children)
-        print(right_tree_children)
-        print(tree_dictionary[swap_id])
-
-        # print(root_left_tree.inorder_traversal(root_left_tree, "root"))
-        # print()
-        # print(root_right_tree.inorder_traversal(root_right_tree, "root"))
-
-        if swap_branch_left == "":
+        if get_branch(root_left_tree, swap_id) is None:
             swap_one_parent, swap_one_branch = get_same_branch(root_right_tree, swap_id, tree_dictionary[swap_id][0][0])
             swap_one_branch = copy.deepcopy(swap_one_branch)
             swap_two_parent, swap_two_branch = copy.deepcopy(get_same_branch(root_right_tree, swap_id, tree_dictionary[swap_id][1][0]))
@@ -171,7 +179,8 @@ for line in file.split('\n'):
             same_tree_swap(root_right_tree, swap_id, swap_one_parent, swap_two_branch)
             same_tree_swap(root_right_tree, swap_id, swap_two_parent, swap_one_branch)
             continue
-        elif swap_branch_right == "":
+
+        elif  get_branch(root_right_tree, swap_id) is None:
             swap_one_parent, swap_one_branch = get_same_branch(root_left_tree, swap_id, tree_dictionary[swap_id][0][0])
             swap_one_branch = copy.deepcopy(swap_one_branch)
             swap_two_parent, swap_two_branch = copy.deepcopy(get_same_branch(root_left_tree, swap_id, tree_dictionary[swap_id][1][0]))
@@ -180,18 +189,57 @@ for line in file.split('\n'):
             same_tree_swap(root_left_tree, swap_id, swap_two_parent, swap_one_branch)
             continue
 
-        root_left_swap_node = ""
-        root_right_swap_node = ""
-        dfs_swap(root_left_tree, swap_id, "left")
-        dfs_swap(root_right_tree, swap_id, "right")
 
-        swap_branch_left.left = None
-        swap_branch_left.right = None
-        remake_branch(root_left_swap_node, right_tree_children)
+        swap_branch_left_parent, swap_branch_left = get_branch(root_left_tree, swap_id)
+        swap_branch_right_parent, swap_branch_right = get_branch(root_right_tree, swap_id)
 
-        swap_branch_right.left = None
-        swap_branch_right.right = None
-        remake_branch(root_right_swap_node, left_tree_children)
+        print("right", swap_branch_right.rank)
+
+        if swap_branch_left_parent.rank == tree_dictionary[swap_id][0][0] or swap_branch_left_parent.rank == tree_dictionary[swap_id][1][0]:
+            root_left_tree = None
+            root_left_tree = copy.deepcopy(swap_branch_right)
+            root_right_tree = None
+            root_right_tree = copy.deepcopy(swap_branch_left)
+            continue
+        else:
+            print('left tree:', swap_branch_left_parent.rank)
+            print('right tree:', swap_branch_right_parent.rank)
+            print('left tree:', swap_branch_left.rank)
+            print('right tree:', swap_branch_right.rank)
+            dfs_swap_branch(root_left_tree, swap_id, swap_branch_left_parent, copy.deepcopy(swap_branch_right))
+            dfs_swap_branch(root_right_tree, swap_id, swap_branch_right_parent, copy.deepcopy(swap_branch_left))
+
+
+        # if swap_branch_left is None:
+        #     swap_one_parent, swap_one_branch = get_same_branch(root_right_tree, swap_id, tree_dictionary[swap_id][0][0])
+        #     swap_one_branch = copy.deepcopy(swap_one_branch)
+        #     swap_two_parent, swap_two_branch = copy.deepcopy(get_same_branch(root_right_tree, swap_id, tree_dictionary[swap_id][1][0]))
+        #     swap_two_branch = copy.deepcopy(swap_two_branch)
+        #     same_tree_swap(root_right_tree, swap_id, swap_one_parent, swap_two_branch)
+        #     same_tree_swap(root_right_tree, swap_id, swap_two_parent, swap_one_branch)
+        #     continue
+
+        # elif swap_branch_right == "":
+        #     swap_one_parent, swap_one_branch = get_same_branch(root_left_tree, swap_id, tree_dictionary[swap_id][0][0])
+        #     swap_one_branch = copy.deepcopy(swap_one_branch)
+        #     swap_two_parent, swap_two_branch = copy.deepcopy(get_same_branch(root_left_tree, swap_id, tree_dictionary[swap_id][1][0]))
+        #     swap_two_branch = copy.deepcopy(swap_two_branch)
+        #     same_tree_swap(root_left_tree, swap_id, swap_one_parent, swap_two_branch)
+        #     same_tree_swap(root_left_tree, swap_id, swap_two_parent, swap_one_branch)
+        #     continue
+
+        # root_left_swap_node = ""
+        # root_right_swap_node = ""
+        # dfs_swap(root_left_tree, swap_id, "left")
+        # dfs_swap(root_right_tree, swap_id, "right")
+
+        # swap_branch_left.left = None
+        # swap_branch_left.right = None
+        # remake_branch(root_left_swap_node, right_tree_children)
+        #
+        # swap_branch_right.left = None
+        # swap_branch_right.right = None
+        # remake_branch(root_right_swap_node, left_tree_children)
 
         print(root_left_tree.inorder_traversal(root_left_tree, "root"))
         print()
