@@ -128,7 +128,7 @@ def count(sheep, dragon, turn="sheep"):
     if turn == "dragon":
         total = 0
         for r,c in get_dragon_locations(dragon[0], dragon[1]):
-            total += count(tuple((sr,sc) for sr, sc in sheep if (sr,sc) in protect_pos or (sr,sc) != (r,c))  , (r,c), turn="sheep" )
+            total += count(tuple((sr,sc) for sr, sc in sheep if (sr,sc) in protect_pos or (sr,sc) != (r,c)), (r,c), turn="sheep" )
         return total
 
 
