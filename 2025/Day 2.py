@@ -33,13 +33,29 @@ def part_two():
                     left += mid
                     right += mid
                 if matches:
-                    print(int(i))
                     ans += int(i)
                     break
     return ans
 
+def part_two_alt():
+    ans = 0
+    for id_ranges in file:
+        start, end = map(int, id_ranges.split("-"))
+        for i in range(start, end+1):
+            i = str(i)
+            length_num = len(i)
+            for j in range(2, length_num+1):
+                if length_num % j != 0:
+                    continue
+                mid = length_num // j
+                seq = i[:mid]
+                if seq * j == i:
+                    ans += int(i)
+                    break
+
+    return ans
 # print(part_one())
-print(part_two())
+print(part_two_alt())
 
 
 
