@@ -30,7 +30,3 @@ def part_two():
         print(total_removed)
 
 part_two()
-
-list= [1,3,2]
-list.sort()
-table.sort(List,)

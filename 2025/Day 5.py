@@ -27,11 +27,3 @@ def part_two():
 
 print(part_two())
 
-
-
-
-
-
-
-part_two()
-
