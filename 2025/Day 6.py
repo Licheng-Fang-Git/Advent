@@ -8,7 +8,6 @@ def part_one():
                 equations[i].append((line[i]))
             except IndexError:
                 equations.append([line[i]])
-
     total = 0
     for problem in equations:
         symbol = problem[-1]
@@ -19,12 +18,10 @@ def part_one():
         total += one_problem
     return total
 
-# Requires me to move the arithmetic operation to the top
-def part_two():
+def get_equations():
     equations = {}
     symbol_line = file[0]
     space_count = 0
-    total = 0
     # getting the number of spaces for format
     for i in range(len(symbol_line)):
         if symbol_line[i] == "+" or symbol_line[i] == "*" or symbol_line[i] == ";":
@@ -43,7 +40,12 @@ def part_two():
                 equations[i].append(num)
 
     # equations = 0 : [3, "+", "123", "45", "6"]
+    return equations
 
+# Move the arithmetic operation to the top and add semicolons to the raw data
+def part_two():
+    equations = get_equations()
+    total = 0
     for key in equations:
         if not equations[key]: continue
         if equations[key][1] == "*": one_prob_total = 1
@@ -58,6 +60,6 @@ def part_two():
 
     print(total)
 
-part_one()
+# part_one()
 part_two()
 
