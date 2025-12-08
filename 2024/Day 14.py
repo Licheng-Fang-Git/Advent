@@ -1,91 +1,71 @@
-# import re
-#
-# WIDTH = 101 #101
-# HEIGHT = 103 # 103
-# robots = []
-# with open("input") as file:
-#     for line in file:
-#         robots.append(tuple(map(int, re.findall(r"-?\d+", line))))
-#
-#
-# finish = []
-# for px, py, vx, vy in robots:
-#     fy = (px + vx * 100) % WIDTH
-#     fx = (py + vy * 100) % HEIGHT
-#     finish.append((fx,fy))
-#
-# grid =[[0]*WIDTH for _ in range(HEIGHT)]
-#
-# for x,y in finish:
-#     grid[x][y] += 1
-#
-# for row in grid:
-#     print(row)
-#
-# def quadrantsCheck(finish):
-#     tl= bl= tr= br = 0
-#     horizontal_line = HEIGHT // 2 # 3
-#     vertical_line = WIDTH // 2 # 5
-#
-#     for x, y in finish:
-#         if x == horizontal_line and y == vertical_line :
-#             continue
-#         # quad 1
-#         if x < horizontal_line and y < vertical_line:
-#             tl += 1
-#         # quad 2
-#         if x < horizontal_line and y > vertical_line:
-#             bl += 1
-#         if x > horizontal_line and y < vertical_line:
-#             tr += 1
-#         if x > horizontal_line and y > vertical_line:
-#             br += 1
-#     return tl * tr * br * bl;
-#
-#
-# print(quadrantsCheck(finish))
+import time
 
-import re
+file = open("../input").read().split("\n")
+H,W = 103, 101
+class Robot:
+    def __init__(self, p_x, p_y, v_x, v_y):
+        self.p_x = p_x
+        self.p_y = p_y
+        self.v_x = v_x
+        self.v_y = v_y
 
-WIDTH = 101
-HEIGHT = 103
+    def move(self, h, w):
+        self.p_x = (self.p_x + self.v_x) % w
+        self.p_y = (self.p_y + self.v_y) % h
 
+    def display_position(self):
+        #row, column
+        return self.p_y, self.p_x
+
+grid = [["." for j in range(W)]for i in range(H)]
 robots = []
+for i, line in enumerate(file):
+    position, velocity = line.split(" ")
+    pos_x, pos_y = int(position.split(",")[0][2:]), int(position.split(",")[1])
+    velocity_x, velocity_y = int(velocity.split(",")[0][2:]), int(velocity.split(",")[1])
+    robots.append(Robot(pos_x, pos_y, velocity_x, velocity_y))
+def solve_one():
+    horizontal_split = H // 2
+    vertical_split = W // 2
+    print(horizontal_split, vertical_split)
+    for i in range(100):
+        for r in robots:
+            r.move(H,W)
+    quad_1, quad_2, quad_3, quad_4 = 0, 0, 0, 0
+    for robot in robots:
+        r,c = robot.display_position()
+        if 0 <= r < horizontal_split and 0 <= c < vertical_split:
+            quad_1 += 1
+        elif 0 <= r < horizontal_split and vertical_split < c < W:
+            quad_2 += 1
+        elif horizontal_split < r < H and 0 <= c < vertical_split:
+            quad_3 += 1
+        elif horizontal_split < r < H and vertical_split < c < W:
+            quad_4 += 1
 
-for line in open(0):
-    robots.append(tuple(map(int, re.findall(r"-?\d+", line))))
+    return quad_1 * quad_2 * quad_3 * quad_4
 
-min_sf = float("inf")
-best_iteration = None
+def solve_two():
+    for i in range(100):
+        print("Seconds:", i)
+        for r in robots:
+            r.move(H,W)
+            r,c = r.display_position()
+            grid[r][c] = "*"
 
-for second in range(WIDTH * HEIGHT):
-    result = []
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if j + 1 == len(grid[i]):
+                    print(grid[i][j], end="\n")
+                else:
+                    print(grid[i][j], end="")
+        print()
+        for r in robots:
+            r,c = r.display_position()
+            grid[r][c] = "."
 
-    for px, py, vx, vy in robots:
-        result.append(((px + vx * second) % WIDTH, (py + vy * second) % HEIGHT))
+        time.sleep(0.5)
 
-    tl = bl = tr = br = 0
+# solve_one()
+solve_two()
 
-    VM = (HEIGHT - 1) // 2
-    HM = (WIDTH - 1) // 2
-
-    for px, py in result:
-        if px == HM or py == VM: continue
-        if px < HM:
-            if py < VM:
-                tl += 1
-            else:
-                bl += 1
-        else:
-            if py < VM:
-                tr += 1
-            else:
-                br += 1
-
-    sf = tl * bl * tr * br
-
-    if sf < min_sf:
-        min_sf = sf
-        best_iteration = second
-
-print(best_iteration)

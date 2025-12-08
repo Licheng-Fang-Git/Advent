@@ -30,7 +30,6 @@ def solve_two_dfs(position):
         return 1
     count = 0
     r,c = position
-    print(r,c)
     if grid[r][c] != "^":
         count += solve_two_dfs((r+1,c))
     else:
