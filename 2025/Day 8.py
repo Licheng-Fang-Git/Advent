@@ -13,13 +13,13 @@ for i in range(len(file)):
 sorted_box_distances = sorted(box_distances.items(), key=lambda item: item[1])
 
 visited = set()
-def dfs(node, all_connections, total_circuits):
+def dfs(node, total_circuits):
     count = 0
     for connect in total_circuits[node]:
         if connect in visited: continue
         count += 1
         visited.add(connect)
-        count += dfs(connect, all_connections, total_circuits)
+        count += dfs(connect, total_circuits)
     return count
 
 def dfs_get_length(node, total_circuits, seen):
@@ -30,7 +30,8 @@ def dfs_get_length(node, total_circuits, seen):
         seen.add(connect)
         count += dfs_get_length(connect,total_circuits, seen)
     return count
-# My plan for part 1 is to make my boxes connected and dfs each circuit to get the length
+
+# My plan for part 1 is to make the boxes connected and dfs each circuit to get the length
 def solve_one():
     total_circuits = {}
     for i in range(1000):
@@ -51,7 +52,7 @@ def solve_one():
         if circuit in visited:
             continue
         visited.add(circuit)
-        max_circuits.append(dfs(circuit, total_circuits[circuit], total_circuits)+1)
+        max_circuits.append(dfs(circuit, total_circuits)+1)
 
     circuit_lengths = sorted(max_circuits)
     total = 1
@@ -97,7 +98,5 @@ def solve_two():
                 break
         i += 1
         print(circuit_lens)
-#6588 (27558, 61383, 12726) (42727, 57753, 11997)
-#6587 (37565, 7239, 99565) (39240, 1604, 85100)
 
 solve_two()
