@@ -50,7 +50,3 @@ for machine in file:
 print(total)
 
 
-
-#51
-
-
