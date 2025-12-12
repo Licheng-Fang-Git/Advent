@@ -1,6 +1,5 @@
 import time
 
-
 def get_file_data():
     f = open("../input")
     data = []
